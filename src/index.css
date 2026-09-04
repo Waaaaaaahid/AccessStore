@@ -4,92 +4,78 @@
 
 @layer base {
   :root {
-    --color-accent: #ef233c;
-    --color-accent-dark: #c9142b;
-    --color-bg: #08090a;
-    --color-surface: #0f1012;
-    --color-card: #141518;
-    --color-border: #24262a;
+    --brand: #2563eb;
+    --brand-dark: #1d4ed8;
+    --ink: #0f172a;
+    --muted: #64748b;
+    --page: #f8fafc;
+    --surface: #ffffff;
+    --line: #e2e8f0;
   }
-  html { scroll-behavior: smooth; background: var(--color-bg); }
-  body { font-family: 'Inter', system-ui, -apple-system, sans-serif; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; background: var(--color-bg); color: #f5f5f5; }
-  ::selection { background: #ef233c; color: #fff; }
+
+  html {
+    scroll-behavior: smooth;
+    background: var(--page);
+  }
+
+  body {
+    margin: 0;
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background: var(--page);
+    color: var(--ink);
+  }
+
+  ::selection {
+    background: #dbeafe;
+    color: #1e3a8a;
+  }
+
+  button,
+  a,
+  input,
+  textarea,
+  select {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  input,
+  textarea,
+  select {
+    color: var(--ink);
+    background: var(--surface);
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    color: #94a3b8;
+  }
+
+  :focus-visible {
+    outline: 2px solid #2563eb;
+    outline-offset: 2px;
+  }
 }
 
-/* AccessStore premium dark palette: black foundation, white hierarchy, restrained red accent. */
-@layer utilities {
-  .access-red { color: #ef233c; }
-  .access-red-bg { background-color: #ef233c; color: #fff; }
-  .access-black { background-color: #08090a; color: #fff; }
+@layer components {
+  .access-brand {
+    color: var(--brand);
+  }
 
-  .bg-white { background-color: #08090a !important; }
-  .bg-gray-50 { background-color: #0f1012 !important; }
-  .bg-gray-100 { background-color: #141518 !important; }
-  .bg-gray-200 { background-color: #1b1d20 !important; }
-  .bg-gray-300 { background-color: #24262a !important; }
-  .bg-gray-400 { background-color: #34373d !important; }
-  .bg-gray-800 { background-color: #0b0c0e !important; }
-  .bg-gray-900 { background-color: #08090a !important; }
-
-  /* Explicitly fix the classes used by the redesigned pages. */
-  .text-gray-950 { color: #f7f7f8 !important; }
-  .text-gray-900 { color: #f7f7f8 !important; }
-  .text-gray-800 { color: #eeeeef !important; }
-  .text-gray-700 { color: #d4d5d8 !important; }
-  .text-gray-600 { color: #b9bbc0 !important; }
-  .text-gray-500 { color: #a1a3a9 !important; }
-  .text-gray-400 { color: #74777e !important; }
-  .text-gray-300 { color: #8f9299 !important; }
-
-  .border-gray-100 { border-color: #181a1d !important; }
-  .border-gray-200 { border-color: #24262a !important; }
-  .border-gray-300 { border-color: #303339 !important; }
-
-  .from-gray-50 { --tw-gradient-from: #0f1012 var(--tw-gradient-from-position); --tw-gradient-to: rgb(15 16 18 / 0) var(--tw-gradient-to-position); }
-  .to-white { --tw-gradient-to: #08090a var(--tw-gradient-to-position); }
-  .from-white { --tw-gradient-from: #08090a var(--tw-gradient-from-position); --tw-gradient-to: rgb(8 9 10 / 0) var(--tw-gradient-to-position); }
-  .to-gray-50 { --tw-gradient-to: #0f1012 var(--tw-gradient-to-position); }
-  .from-gray-900 { --tw-gradient-from: #08090a var(--tw-gradient-from-position); --tw-gradient-to: rgb(8 9 10 / 0) var(--tw-gradient-to-position); }
-  .to-gray-800 { --tw-gradient-to: #0b0c0e var(--tw-gradient-to-position); }
-
-  .bg-blue-50 { background-color: #1a080b !important; }
-  .bg-blue-100 { background-color: #260b10 !important; }
-  .bg-blue-200 { background-color: #3a1017 !important; }
-  .bg-blue-400 { background-color: #e21b32 !important; }
-  .bg-blue-500, .bg-blue-600 { background-color: #ef233c !important; }
-  .bg-blue-700 { background-color: #bf132b !important; }
-  .text-blue-400, .text-blue-500, .text-blue-600, .text-blue-700 { color: #ef233c !important; }
-  .border-blue-100, .border-blue-500, .border-blue-600 { border-color: #ef233c !important; }
-  .ring-blue-500\/20 { --tw-ring-color: rgb(239 35 60 / 0.2) !important; }
-
-  .bg-amber-50 { background-color: #1a0b0d !important; }
-  .bg-amber-100 { background-color: #280d11 !important; }
-  .text-amber-600, .text-amber-700, .text-amber-800 { color: #ff4a5f !important; }
-  .bg-green-50, .bg-green-100 { background-color: #12080a !important; }
-  .text-green-500, .text-green-600, .text-green-700 { color: #ff4a5f !important; }
-  .bg-red-50 { background-color: #1a080b !important; }
-  .bg-red-100 { background-color: #280b10 !important; }
-  .text-red-400 { color: #ff5265 !important; }
-  .text-red-500, .text-red-600, .text-red-700 { color: #ef233c !important; }
-  .border-red-500, .border-red-600 { border-color: #ef233c !important; }
-
-  .hover\:bg-gray-800:hover { background-color: #1a1c20 !important; }
-  .hover\:bg-gray-100:hover { background-color: #1b1d20 !important; }
-  .hover\:text-gray-900:hover { color: #ffffff !important; }
-  .hover\:border-gray-300:hover { border-color: #ef233c !important; }
-
-  input, textarea, select { background-color: #0f1012; color: #f5f5f5; border-color: #292b30; }
-  input::placeholder, textarea::placeholder { color: #6f7279; }
-  input:focus, textarea:focus, select:focus { border-color: #ef233c; outline-color: #ef233c; }
+  .access-brand-bg {
+    background: var(--brand);
+    color: white;
+  }
 }
 
 @layer utilities {
-  .animate-fade-in { animation: fadeIn .6s ease-out forwards; }
-  .animate-fade-in-up { animation: fadeInUp .6s ease-out forwards; }
-  .animate-fade-in-down { animation: fadeInDown .6s ease-out forwards; }
-  .animate-scale-in { animation: scaleIn .3s ease-out forwards; }
+  .animate-fade-in { animation: fadeIn .6s ease-out both; }
+  .animate-fade-in-up { animation: fadeInUp .6s ease-out both; }
+  .animate-fade-in-down { animation: fadeInDown .4s ease-out both; }
+  .animate-scale-in { animation: scaleIn .3s ease-out both; }
   .animate-float { animation: float 6s ease-in-out infinite; }
-  .animate-float-delayed { animation: float 6s ease-in-out infinite; animation-delay: 2s; }
+  .animate-float-delayed { animation: float 6s ease-in-out infinite 2s; }
   .animate-spin-slow { animation: spin 20s linear infinite; }
   .animate-bounce-subtle { animation: bounceSubtle 2s ease-in-out infinite; }
   .scrollbar-hide::-webkit-scrollbar { display: none; }
@@ -97,11 +83,17 @@
 }
 
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-@keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-@keyframes fadeInDown { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
-@keyframes scaleIn { from { opacity: 0; transform: scale(.95); } to { opacity: 1; transform: scale(1); } }
-@keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+@keyframes fadeInUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes fadeInDown { from { opacity: 0; transform: translateY(-12px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes scaleIn { from { opacity: 0; transform: scale(.96); } to { opacity: 1; transform: scale(1); } }
+@keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
 @keyframes bounceSubtle { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
-.page-transition { animation: fadeIn .4s ease-out; }
-.reveal { opacity: 0; transform: translateY(30px); transition: opacity .6s ease-out, transform .6s ease-out; }
+
+.page-transition { animation: fadeIn .35s ease-out both; }
+.reveal { opacity: 0; transform: translateY(24px); transition: opacity .6s ease, transform .6s ease; }
 .reveal.visible { opacity: 1; transform: translateY(0); }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+}
