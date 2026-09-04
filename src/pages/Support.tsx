@@ -3,6 +3,8 @@ import { Coffee, Heart, Smartphone, Shield, Check, Copy, ExternalLink } from 'lu
 import { useSettings, formatINR } from '@/lib/config';
 import { supabase } from '@/lib/supabase';
 
+const CREATOR_UPI_ID = '9958856831@pthdfc';
+
 export default function Support() {
   const settings = useSettings();
   const [amount, setAmount] = useState(100);
@@ -17,25 +19,40 @@ export default function Support() {
 
   const amounts = [50, 100, 250, 500, 1000];
   const finalAmount = customAmount ? Number(customAmount) : amount;
+  const upiId = CREATOR_UPI_ID;
 
   const copyUpi = async () => {
-    await navigator.clipboard?.writeText(settings.upi_id);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 1500);
+    try {
+      await navigator.clipboard?.writeText(upiId);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    } catch {
+      // Clipboard can be unavailable in some browsers; the UPI ID remains visible for manual copy.
+    }
   };
 
   const startPayment = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!finalAmount || finalAmount < 1 || !settings.upi_id) return;
-    const upiUrl = `upi://pay?pa=${encodeURIComponent(settings.upi_id)}&pn=${encodeURIComponent('AccessStore')}&am=${encodeURIComponent(finalAmount.toFixed(2))}&cu=INR&tn=${encodeURIComponent('AccessStore Creator Support')}`;
+    if (!Number.isFinite(finalAmount) || finalAmount < 1) return;
+
+    const params = new URLSearchParams({
+      pa: upiId,
+      pn: 'AccessStore',
+      am: finalAmount.toFixed(2),
+      cu: 'INR',
+      tn: 'AccessStore Creator Support',
+    });
+    const upiUrl = `upi://pay?${params.toString()}`;
+
     setPaymentStarted(true);
-    window.location.href = upiUrl;
+    window.location.assign(upiUrl);
   };
 
   const confirmPayment = async (e: React.FormEvent) => {
     e.preventDefault();
     const cleanUtr = utr.trim();
     if (!cleanUtr) return;
+
     const { error } = await supabase.from('support_payments').insert({
       name: name || null,
       email: email || null,
@@ -45,6 +62,7 @@ export default function Support() {
       status: 'pending_verification',
       utr: cleanUtr,
     });
+
     if (!error) setSubmitted(true);
   };
 
@@ -73,7 +91,7 @@ export default function Support() {
           <div className="bg-gray-50 rounded-xl p-4 mb-6">
             <p className="text-xs text-gray-500 mb-1">Pay to</p>
             <div className="flex items-center justify-between gap-3">
-              <p className="font-bold text-gray-900 break-all">{settings.upi_id}</p>
+              <p className="font-bold text-gray-900 break-all">{upiId}</p>
               <button type="button" onClick={copyUpi} className="shrink-0 p-2 rounded-lg border border-gray-200 bg-white hover:bg-gray-100" aria-label="Copy UPI ID"><Copy className="w-4 h-4" /></button>
             </div>
             {copied && <p className="text-xs text-green-600 mt-2">UPI ID copied.</p>}
@@ -106,7 +124,7 @@ export default function Support() {
             <div className="bg-white border border-gray-200 rounded-2xl p-6">
               <div className="flex items-center gap-2 mb-4"><Smartphone className="w-5 h-5 text-gray-900" /><h2 className="font-bold text-gray-900">Pay via UPI</h2></div>
               <p className="text-sm text-gray-500 mb-4">Pay directly from a supported UPI app. The amount is filled automatically.</p>
-              <div className="p-4 bg-gray-50 rounded-xl border border-gray-100"><p className="text-xs text-gray-500 mb-1">UPI ID</p><div className="flex items-center justify-between gap-3"><p className="font-bold text-gray-900 text-lg break-all">{settings.upi_id}</p><button type="button" onClick={copyUpi} className="shrink-0 p-2 rounded-lg border border-gray-200 bg-white hover:bg-gray-100" aria-label="Copy UPI ID"><Copy className="w-4 h-4" /></button></div>{copied && <p className="text-xs text-green-600 mt-2">UPI ID copied.</p>}</div>
+              <div className="p-4 bg-gray-50 rounded-xl border border-gray-100"><p className="text-xs text-gray-500 mb-1">UPI ID</p><div className="flex items-center justify-between gap-3"><p className="font-bold text-gray-900 text-lg break-all">{upiId}</p><button type="button" onClick={copyUpi} className="shrink-0 p-2 rounded-lg border border-gray-200 bg-white hover:bg-gray-100" aria-label="Copy UPI ID"><Copy className="w-4 h-4" /></button></div>{copied && <p className="text-xs text-green-600 mt-2">UPI ID copied.</p>}</div>
               <div className="flex items-start gap-2 mt-4 p-3 bg-blue-50 rounded-lg"><Shield className="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5" /><p className="text-xs text-blue-700">After paying, return here and submit your UPI transaction ID / UTR. The contribution is only marked received after verification.</p></div>
             </div>
             <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl p-6 text-white"><h3 className="font-bold mb-2">Why Support?</h3><ul className="space-y-2 text-sm text-gray-300"><li className="flex items-start gap-2"><Check className="w-4 h-4 text-blue-400 mt-0.5 flex-shrink-0" /> Helps create better content</li><li className="flex items-start gap-2"><Check className="w-4 h-4 text-blue-400 mt-0.5 flex-shrink-0" /> Supports community events</li><li className="flex items-start gap-2"><Check className="w-4 h-4 text-blue-400 mt-0.5 flex-shrink-0" /> Keeps content free for everyone</li><li className="flex items-start gap-2"><Check className="w-4 h-4 text-blue-400 mt-0.5 flex-shrink-0" /> Funds new gaming equipment</li></ul></div>
