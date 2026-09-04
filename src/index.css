@@ -3,79 +3,78 @@
 @tailwind utilities;
 
 @layer base {
-  :root {
-    --color-accent: #ef4444;
-    --color-accent-dark: #b91c1c;
-    --color-dark: #09090b;
-  }
+  :root { --color-accent: #dc2626; --color-accent-dark: #991b1b; --color-dark: #0a0a0a; }
   html { scroll-behavior: smooth; }
-  body {
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    background: #09090b;
-    color: #f4f4f5;
-  }
-  ::selection { background: #dc2626; color: white; }
+  body { font-family: 'Inter', system-ui, -apple-system, sans-serif; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; background: #fff; color: #111; }
+  ::selection { background: #dc2626; color: #fff; }
 }
 
-/* AccessStore: premium red + black visual system */
+/* AccessStore: clean premium red + black. White is the canvas; black is structural; red is the accent. */
 @layer utilities {
-  .access-red { color: #ef4444; }
+  .access-red { color: #dc2626; }
   .access-red-bg { background-color: #dc2626; color: #fff; }
-  .access-black { background-color: #09090b; color: #fff; }
+  .access-black { background-color: #0a0a0a; color: #fff; }
 
-  /* Re-theme the existing Tailwind utility classes used throughout the generated UI. */
-  .bg-white { background-color: #0f0f12 !important; }
-  .bg-gray-50 { background-color: #141417 !important; }
-  .bg-gray-100 { background-color: #18181b !important; }
-  .bg-gray-900 { background-color: #050507 !important; }
-  .bg-gray-800 { background-color: #0a0a0c !important; }
-  .text-gray-900 { color: #f4f4f5 !important; }
-  .text-gray-800 { color: #e4e4e7 !important; }
-  .text-gray-700 { color: #d4d4d8 !important; }
-  .text-gray-600 { color: #a1a1aa !important; }
-  .text-gray-500 { color: #a1a1aa !important; }
-  .text-gray-400 { color: #71717a !important; }
-  .border-gray-200 { border-color: #27272a !important; }
-  .border-gray-100 { border-color: #27272a !important; }
-  .border-gray-300 { border-color: #3f3f46 !important; }
+  .bg-white { background-color: #fff !important; }
+  .bg-gray-50 { background-color: #fafafa !important; }
+  .bg-gray-100 { background-color: #f4f4f5 !important; }
+  .bg-gray-200 { background-color: #e4e4e7 !important; }
+  .bg-gray-800 { background-color: #18181b !important; }
+  .bg-gray-900 { background-color: #0a0a0a !important; }
+  .text-gray-900 { color: #111 !important; }
+  .text-gray-800 { color: #18181b !important; }
+  .text-gray-700 { color: #3f3f46 !important; }
+  .text-gray-600 { color: #52525b !important; }
+  .text-gray-500 { color: #71717a !important; }
+  .text-gray-400 { color: #a1a1aa !important; }
+  .border-gray-200 { border-color: #e4e4e7 !important; }
+  .border-gray-100 { border-color: #f4f4f5 !important; }
+  .border-gray-300 { border-color: #d4d4d8 !important; }
 
-  .bg-blue-50 { background-color: #2a0d0d !important; }
-  .bg-blue-100 { background-color: #3b1010 !important; }
+  .from-gray-50 { --tw-gradient-from: #fafafa var(--tw-gradient-from-position); --tw-gradient-to: rgb(250 250 250 / 0) var(--tw-gradient-to-position); }
+  .to-white { --tw-gradient-to: #fff var(--tw-gradient-to-position); }
+  .from-gray-900 { --tw-gradient-from: #0a0a0a var(--tw-gradient-from-position); --tw-gradient-to: rgb(10 10 10 / 0) var(--tw-gradient-to-position); }
+  .to-gray-800 { --tw-gradient-to: #18181b var(--tw-gradient-to-position); }
+
+  /* Legacy blue palette becomes the AccessStore red palette. */
+  .bg-blue-50 { background-color: #fef2f2 !important; }
+  .bg-blue-100 { background-color: #fee2e2 !important; }
+  .bg-blue-200 { background-color: #fecaca !important; }
+  .bg-blue-400 { background-color: #f87171 !important; }
   .bg-blue-500 { background-color: #ef4444 !important; }
   .bg-blue-600 { background-color: #dc2626 !important; }
   .bg-blue-700 { background-color: #b91c1c !important; }
   .text-blue-400 { color: #f87171 !important; }
   .text-blue-500 { color: #ef4444 !important; }
-  .text-blue-600 { color: #ef4444 !important; }
-  .text-blue-700 { color: #f87171 !important; }
+  .text-blue-600 { color: #dc2626 !important; }
+  .text-blue-700 { color: #b91c1c !important; }
+  .border-blue-100 { border-color: #fecaca !important; }
   .border-blue-500 { border-color: #ef4444 !important; }
   .border-blue-600 { border-color: #dc2626 !important; }
   .ring-blue-500\/20 { --tw-ring-color: rgb(239 68 68 / 0.2) !important; }
 
-  .bg-amber-50 { background-color: #24160a !important; }
-  .text-amber-600 { color: #f87171 !important; }
-  .text-amber-800 { color: #fecaca !important; }
-
-  .bg-green-50 { background-color: #0d1f16 !important; }
-  .text-green-600 { color: #4ade80 !important; }
-
-  .bg-red-50 { background-color: #2a0d0d !important; }
+  /* Keep success/warning states semantically recognizable. */
+  .bg-amber-50 { background-color: #fff7ed !important; }
+  .text-amber-600 { color: #b45309 !important; }
+  .text-amber-800 { color: #92400e !important; }
+  .bg-green-50 { background-color: #f0fdf4 !important; }
+  .text-green-600 { color: #16a34a !important; }
+  .bg-red-50 { background-color: #fef2f2 !important; }
   .text-red-500 { color: #ef4444 !important; }
   .text-red-600 { color: #dc2626 !important; }
   .border-red-500 { border-color: #ef4444 !important; }
+
   .hover\:bg-gray-800:hover { background-color: #18181b !important; }
-  .hover\:bg-gray-100:hover { background-color: #27272a !important; }
-  .hover\:text-gray-900:hover { color: #fff !important; }
-  .hover\:border-gray-300:hover { border-color: #52525b !important; }
+  .hover\:bg-gray-100:hover { background-color: #f4f4f5 !important; }
+  .hover\:text-gray-900:hover { color: #111 !important; }
+  .hover\:border-gray-300:hover { border-color: #d4d4d8 !important; }
 }
 
 @layer utilities {
-  .animate-fade-in { animation: fadeIn 0.6s ease-out forwards; }
-  .animate-fade-in-up { animation: fadeInUp 0.6s ease-out forwards; }
-  .animate-fade-in-down { animation: fadeInDown 0.6s ease-out forwards; }
-  .animate-scale-in { animation: scaleIn 0.3s ease-out forwards; }
+  .animate-fade-in { animation: fadeIn .6s ease-out forwards; }
+  .animate-fade-in-up { animation: fadeInUp .6s ease-out forwards; }
+  .animate-fade-in-down { animation: fadeInDown .6s ease-out forwards; }
+  .animate-scale-in { animation: scaleIn .3s ease-out forwards; }
   .animate-float { animation: float 6s ease-in-out infinite; }
   .animate-float-delayed { animation: float 6s ease-in-out infinite; animation-delay: 2s; }
   .animate-spin-slow { animation: spin 20s linear infinite; }
@@ -87,10 +86,9 @@
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes fadeInDown { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
-@keyframes scaleIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
-@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
-@keyframes bounceSubtle { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
-
-.page-transition { animation: fadeIn 0.4s ease-out; }
-.reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.6s ease-out, transform 0.6s ease-out; }
+@keyframes scaleIn { from { opacity: 0; transform: scale(.95); } to { opacity: 1; transform: scale(1); } }
+@keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+@keyframes bounceSubtle { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+.page-transition { animation: fadeIn .4s ease-out; }
+.reveal { opacity: 0; transform: translateY(30px); transition: opacity .6s ease-out, transform .6s ease-out; }
 .reveal.visible { opacity: 1; transform: translateY(0); }
