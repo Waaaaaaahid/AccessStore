@@ -5,149 +5,103 @@ import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import rateLimit from 'express-rate-limit';
+import User from './models/User.js';
+import Product from './models/Product.js';
+import Order from './models/Order.js';
 
 const app = express();
-const clientOrigins = process.env.CLIENT_URL?.split(',').map(v => v.trim()).filter(Boolean);
-app.use(cors({ origin: clientOrigins?.length ? clientOrigins : true, credentials: true }));
+const origins = [process.env.CLIENT_URL, process.env.FRONTEND_URL].filter(Boolean).flatMap(v => v.split(',').map(x => x.trim())).filter(Boolean);
+app.use(cors({ origin: origins.length ? origins : true, credentials: true }));
 app.use(express.json({ limit: '1mb' }));
 
-const userSchema = new mongoose.Schema({
-  name: { type: String, trim: true, maxlength: 100 },
-  email: { type: String, required: true, unique: true, lowercase: true, trim: true, index: true },
-  passwordHash: { type: String, required: true, select: false },
-  role: { type: String, enum: ['customer', 'admin'], default: 'customer' },
-  createdAt: { type: Date, default: Date.now },
-  updatedAt: { type: Date, default: Date.now }
-}, { versionKey: false });
-const User = mongoose.models.User || mongoose.model('User', userSchema);
+const authLimiter = rateLimit({ windowMs: 15 * 60 * 1000, limit: 30, standardHeaders: true, legacyHeaders: false });
+const publicUser = u => ({ id: String(u._id), name: u.name || '', email: u.email, role: u.role });
+const tokenFor = u => jwt.sign({ sub: String(u._id), role: u.role, email: u.email }, process.env.JWT_SECRET, { expiresIn: '7d' });
 
-const orderSchema = new mongoose.Schema({
-  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-  name: String, email: String, phone: String, address: mongoose.Schema.Types.Mixed,
-  items: [{ productId: String, name: String, price: Number, quantity: Number, image: String, size: String }],
-  subtotal: Number, shipping: Number, discount: Number, total: Number,
-  paymentStatus: { type: String, enum: ['pending','paid','failed','refunded'], default: 'pending' },
-  orderStatus: { type: String, enum: ['pending_payment','paid','confirmed','processing','shipped','out_for_delivery','delivered','cancelled','refund_initiated','refunded'], default: 'pending_payment' },
-  payment: mongoose.Schema.Types.Mixed,
-  couponCode: String,
-  createdAt: { type: Date, default: Date.now }, updatedAt: { type: Date, default: Date.now }
-});
-const Order = mongoose.models.Order || mongoose.model('Order', orderSchema);
-
-const authLimiter = rateLimit({ windowMs: 15 * 60 * 1000, limit: 30, standardHeaders: true, legacyHeaders: false, message: { error: 'Too many authentication attempts. Please try again later.' } });
-
-function publicUser(user) { return { id: user._id.toString(), name: user.name || '', email: user.email, role: user.role }; }
-function signToken(user) {
-  if (!process.env.JWT_SECRET) throw new Error('JWT_SECRET is not configured');
-  return jwt.sign({ sub: user._id.toString(), role: user.role, email: user.email }, process.env.JWT_SECRET, { expiresIn: '7d' });
-}
-function auth(req, res, next) {
-  const header = req.headers.authorization || '';
-  const token = header.startsWith('Bearer ') ? header.slice(7) : '';
-  if (!token) return res.status(401).json({ error: 'Authentication required' });
+async function auth(req, res, next) {
+  const raw = req.headers.authorization || '';
+  if (!raw.startsWith('Bearer ')) return res.status(401).json({ error: 'Authentication required' });
   try {
-    const payload = jwt.verify(token, process.env.JWT_SECRET);
-    User.findById(payload.sub).then(user => {
-      if (!user) return res.status(401).json({ error: 'Invalid or expired session' });
-      req.user = user;
-      next();
-    }).catch(next);
+    const p = jwt.verify(raw.slice(7), process.env.JWT_SECRET);
+    const u = await User.findById(p.sub);
+    if (!u) return res.status(401).json({ error: 'Invalid or expired session' });
+    req.user = u; next();
   } catch { return res.status(401).json({ error: 'Invalid or expired session' }); }
 }
-function admin(req, res, next) {
-  if (req.user?.role !== 'admin') return res.status(403).json({ error: 'Admin access required' });
-  next();
+const adminOnly = (req, res, next) => req.user?.role === 'admin' ? next() : res.status(403).json({ error: 'Admin access required' });
+
+function productOut(p) {
+  return { id: String(p._id), name: p.name, slug: p.slug, description: p.description || '', short_description: p.short_description || '', price: p.price, original_price: p.original_price ?? null, discount_percentage: p.original_price ? Math.max(0, Math.round((1 - p.price / p.original_price) * 100)) : 0, category_id: p.category || '', image_url: p.image_url || '', images: p.images || (p.image_url ? [p.image_url] : []), rating: p.rating || 0, review_count: p.review_count || 0, stock: p.stock || 0, is_featured: !!p.is_featured, is_new: !!p.is_new, variants: p.variants || [], sizes: p.sizes || [], created_at: p.createdAt?.toISOString?.() || p.createdAt, updated_at: p.updatedAt?.toISOString?.() || p.updatedAt };
+}
+function orderOut(o) {
+  return { id: String(o._id), order_id: o.orderId, customer_name: o.shippingAddress?.name || '', email: o.email || '', phone: o.shippingAddress?.phone || '', address: o.shippingAddress?.address || '', apartment: o.shippingAddress?.apartment || null, city: o.shippingAddress?.city || '', state: o.shippingAddress?.state || '', pincode: o.shippingAddress?.pincode || '', total_amount: o.total, subtotal: o.subtotal, discount: 0, coupon_code: null, payment_status: o.paymentStatus, order_status: o.status, payment_method: o.paymentProvider || 'upi', payment_reference: o.paymentReference || null, estimated_delivery: o.estimatedDelivery || null, items: (o.items || []).map((i, n) => ({ id: `${o._id}-${n}`, order_id: o.orderId, product_id: String(i.product || ''), product_name: i.name, product_image: i.image_url || '', quantity: i.quantity, price: i.price, size: i.size || null })), created_at: o.createdAt, updated_at: o.updatedAt };
 }
 
-app.get('/api/health', (_req, res) => res.json({ ok: true, service: 'AccessStore API' }));
+app.get('/api/health', (_req,res) => res.json({ ok:true, service:'AccessStore API' }));
 
-app.post('/api/auth/register', authLimiter, async (req, res, next) => {
-  try {
-    const name = String(req.body.name || '').trim().slice(0, 100);
-    const email = String(req.body.email || '').trim().toLowerCase();
-    const password = String(req.body.password || '');
-    if (!email) return res.status(400).json({ error: 'Email / username is required' });
-    if (password.length < 8) return res.status(400).json({ error: 'Password must be at least 8 characters' });
-    const existing = await User.findOne({ email }).lean();
-    if (existing) return res.status(409).json({ error: 'An account with this email / username already exists' });
-    const passwordHash = await bcrypt.hash(password, 12);
-    const user = await User.create({ name, email, passwordHash, role: 'customer' });
-    res.status(201).json({ token: signToken(user), user: publicUser(user) });
-  } catch (e) {
-    if (e?.code === 11000) return res.status(409).json({ error: 'An account with this email / username already exists' });
-    next(e);
-  }
-});
-
-app.post('/api/auth/login', authLimiter, async (req, res, next) => {
+app.post('/api/auth/register', authLimiter, async (req,res,next) => {
   try {
     const email = String(req.body.email || '').trim().toLowerCase();
+    const name = String(req.body.name || '').trim().slice(0,100);
     const password = String(req.body.password || '');
-    if (!email || !password) return res.status(400).json({ error: 'Email / username and password are required' });
-    const user = await User.findOne({ email }).select('+passwordHash');
-    if (!user || user.role !== 'customer' || !(await bcrypt.compare(password, user.passwordHash))) return res.status(401).json({ error: 'Invalid customer login details' });
-    res.json({ token: signToken(user), user: publicUser(user) });
-  } catch (e) { next(e); }
+    if (!email) return res.status(400).json({ error:'Email / username is required' });
+    if (password.length < 8) return res.status(400).json({ error:'Password must be at least 8 characters' });
+    if (await User.exists({ email })) return res.status(409).json({ error:'An account with this email / username already exists' });
+    const u = await User.create({ name, email, passwordHash: await bcrypt.hash(password,12), role:'customer' });
+    res.status(201).json({ token:tokenFor(u), user:publicUser(u) });
+  } catch(e) { if(e?.code===11000) return res.status(409).json({error:'An account with this email / username already exists'}); next(e); }
 });
 
-app.post('/api/auth/admin-login', authLimiter, async (req, res, next) => {
+app.post('/api/auth/login', authLimiter, async (req,res,next) => {
   try {
-    const email = String(req.body.email || '').trim().toLowerCase();
-    const password = String(req.body.password || '');
-    const adminEmail = String(process.env.ADMIN_EMAIL || '').trim().toLowerCase();
-    const adminPassword = String(process.env.ADMIN_PASSWORD || '');
-    if (!adminEmail || !adminPassword) return res.status(503).json({ error: 'Admin credentials are not configured on the server' });
-    if (email !== adminEmail || password !== adminPassword) return res.status(401).json({ error: 'Invalid admin login details' });
-    let user = await User.findOne({ email }).select('+passwordHash');
-    if (!user) {
-      user = await User.create({ name: 'Administrator', email, passwordHash: await bcrypt.hash(adminPassword, 12), role: 'admin' });
-    } else if (user.role !== 'admin') {
-      return res.status(403).json({ error: 'This account is not an admin account' });
-    }
-    res.json({ token: signToken(user), user: publicUser(user) });
-  } catch (e) { next(e); }
+    const email = String(req.body.email || '').trim().toLowerCase(), password = String(req.body.password || '');
+    const u = await User.findOne({ email }).select('+passwordHash');
+    if (!u || u.role !== 'customer' || !(await bcrypt.compare(password,u.passwordHash))) return res.status(401).json({error:'Invalid customer login details'});
+    res.json({token:tokenFor(u),user:publicUser(u)});
+  } catch(e){next(e)}
 });
-
-app.get('/api/auth/me', auth, (req, res) => res.json({ user: publicUser(req.user) }));
-app.post('/api/auth/logout', (_req, res) => res.json({ success: true }));
-
-app.post('/api/orders', auth, async (req, res) => {
+app.post('/api/auth/admin-login', authLimiter, async (req,res,next) => {
   try {
-    const order = await Order.create({ ...req.body, user: req.user._id, email: req.user.email, name: req.user.name });
-    res.status(201).json({ data: order, error: null });
-  } catch (e) { res.status(400).json({ data: null, error: e.message }); }
+    const email=String(req.body.email||'').trim().toLowerCase(), password=String(req.body.password||'');
+    const ae=String(process.env.ADMIN_EMAIL||'').trim().toLowerCase(), ap=String(process.env.ADMIN_PASSWORD||'');
+    if(!ae||!ap) return res.status(503).json({error:'Admin credentials are not configured on the server'});
+    if(email!==ae||password!==ap) return res.status(401).json({error:'Invalid admin login details'});
+    let u=await User.findOne({email}).select('+passwordHash');
+    if(!u) u=await User.create({name:'Administrator',email,passwordHash:await bcrypt.hash(ap,12),role:'admin'});
+    else if(u.role!=='admin') return res.status(403).json({error:'This account is not an admin account'});
+    res.json({token:tokenFor(u),user:publicUser(u)});
+  } catch(e){next(e)}
 });
-app.get('/api/orders', auth, async (req, res) => {
-  try { res.json({ data: await Order.find({ user: req.user._id }).sort({ createdAt: -1 }), error: null }); }
-  catch (e) { res.status(500).json({ data: null, error: e.message }); }
-});
-app.get('/api/orders/:id', auth, async (req, res) => {
+app.get('/api/auth/me',auth,(req,res)=>res.json({user:publicUser(req.user)}));
+app.post('/api/auth/logout',(_req,res)=>res.json({success:true}));
+
+app.get('/api/products', async (req,res,next)=>{ try { const q={is_active:true}; if(req.query.q) q.$or=[{name:new RegExp(String(req.query.q),'i')},{short_description:new RegExp(String(req.query.q),'i')}]; const ps=await Product.find(q).sort({createdAt:-1}).lean(); res.json({success:true,products:ps.map(productOut)}); } catch(e){next(e)} });
+app.get('/api/products/:slug', async(req,res,next)=>{try{const p=await Product.findOne({slug:req.params.slug,is_active:true});if(!p)return res.status(404).json({error:'Product not found'});res.json({success:true,product:productOut(p)})}catch(e){next(e)}});
+
+app.post('/api/orders',auth,async(req,res,next)=>{
   try {
-    const order = await Order.findOne({ _id: req.params.id, user: req.user._id });
-    if (!order) return res.status(404).json({ data: null, error: 'Order not found' });
-    res.json({ data: order, error: null });
-  } catch (e) { res.status(400).json({ data: null, error: e.message }); }
+    const {items,subtotal,shipping,total,shippingAddress,paymentProvider='upi'}=req.body;
+    if(!Array.isArray(items)||!items.length) return res.status(400).json({error:'Cart is empty'});
+    if(!shippingAddress?.name||!shippingAddress?.phone||!shippingAddress?.address||!shippingAddress?.city||!shippingAddress?.state||!shippingAddress?.pincode) return res.status(400).json({error:'Complete shipping details are required'});
+    const safeItems=items.map(i=>({product:i.productId||i.id,name:String(i.name||''),image_url:i.image_url||i.image||'',price:Number(i.price),quantity:Number(i.quantity),size:i.size||undefined}));
+    const order=await Order.create({user:req.user._id,items:safeItems,subtotal:Number(subtotal)||0,shipping:Number(shipping)||0,total:Number(total)||0,paymentProvider,shippingAddress,email:req.user.email,status:'pending',paymentStatus:'pending'});
+    res.status(201).json({data:orderOut(order),rawId:String(order._id),error:null});
+  }catch(e){next(e)}
 });
+app.get('/api/orders',auth,async(req,res,next)=>{try{const os=await Order.find({user:req.user._id}).sort({createdAt:-1});res.json({data:os.map(orderOut),error:null})}catch(e){next(e)}});
+app.get('/api/orders/:id',auth,async(req,res,next)=>{try{const q=mongoose.isValidObjectId(req.params.id)?{_id:req.params.id,user:req.user._id}:{orderId:req.params.id,user:req.user._id};const o=await Order.findOne(q);if(!o)return res.status(404).json({error:'Order not found'});res.json({data:orderOut(o),error:null})}catch(e){next(e)}});
 
-app.patch('/api/admin/orders/:id/status', auth, admin, async (req, res) => {
-  try {
-    const { orderStatus, paymentStatus, payment } = req.body;
-    const order = await Order.findByIdAndUpdate(req.params.id, { orderStatus, paymentStatus, payment, updatedAt: new Date() }, { new: true, runValidators: true });
-    if (!order) return res.status(404).json({ data: null, error: 'Order not found' });
-    res.json({ data: order, error: null });
-  } catch (e) { res.status(400).json({ data: null, error: e.message }); }
-});
+app.get('/api/track/:orderId',async(req,res,next)=>{try{const o=await Order.findOne({orderId:req.params.orderId});if(!o)return res.status(404).json({error:'Order not found'});const contact=String(req.query.contact||'').trim().toLowerCase();if(contact && contact!==String(o.email||'').toLowerCase() && contact!==String(o.shippingAddress?.phone||''))return res.status(404).json({error:'Order not found'});res.json({data:orderOut(o)})}catch(e){next(e)}});
 
-app.get('/api/admin/orders', auth, admin, async (_req, res) => {
-  try { res.json({ data: await Order.find().sort({ createdAt: -1 }), error: null }); }
-  catch (e) { res.status(500).json({ data: null, error: e.message }); }
-});
+app.get('/api/admin/orders',auth,adminOnly,async(req,res,next)=>{try{const os=await Order.find().sort({createdAt:-1});res.json({data:os.map(orderOut)})}catch(e){next(e)}});
+app.patch('/api/admin/orders/:id',auth,adminOnly,async(req,res,next)=>{try{const allowed=['pending','confirmed','processing','shipped','delivered','cancelled'];const update={};if(req.body.status&&allowed.includes(req.body.status))update.status=req.body.status;if(req.body.paymentStatus&&['pending','paid','failed','refunded'].includes(req.body.paymentStatus))update.paymentStatus=req.body.paymentStatus;if(req.body.paymentReference!==undefined)update.paymentReference=String(req.body.paymentReference);const o=await Order.findByIdAndUpdate(req.params.id,update,{new:true,runValidators:true});if(!o)return res.status(404).json({error:'Order not found'});res.json({data:orderOut(o)})}catch(e){next(e)}});
 
-app.use((err, _req, res, _next) => { console.error(err); res.status(500).json({ error: 'Internal server error' }); });
+app.get('/api/admin/products',auth,adminOnly,async(req,res,next)=>{try{res.json({products:(await Product.find().sort({createdAt:-1})).map(productOut)})}catch(e){next(e)}});
+app.post('/api/admin/products',auth,adminOnly,async(req,res,next)=>{try{const p=await Product.create(req.body);res.status(201).json({product:productOut(p)})}catch(e){res.status(400).json({error:e.message})}});
+app.patch('/api/admin/products/:id',auth,adminOnly,async(req,res,next)=>{try{const p=await Product.findByIdAndUpdate(req.params.id,req.body,{new:true,runValidators:true});if(!p)return res.status(404).json({error:'Product not found'});res.json({product:productOut(p)})}catch(e){res.status(400).json({error:e.message})}});
+app.delete('/api/admin/products/:id',auth,adminOnly,async(req,res,next)=>{try{const p=await Product.findByIdAndDelete(req.params.id);if(!p)return res.status(404).json({error:'Product not found'});res.json({success:true})}catch(e){next(e)}});
 
-const port = Number(process.env.PORT || 5000);
-if (!process.env.MONGO_URI) { console.error('MONGO_URI is required'); process.exit(1); }
-if (!process.env.JWT_SECRET) { console.error('JWT_SECRET is required'); process.exit(1); }
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => app.listen(port, () => console.log(`AccessStore API listening on ${port}`)))
-  .catch(err => { console.error('MongoDB connection failed:', err.message); process.exit(1); });
+app.use((err,_req,res,_next)=>{console.error(err);res.status(500).json({error:'Internal server error'})});
+const port=Number(process.env.PORT||5000);
+if(!process.env.MONGO_URI||!process.env.JWT_SECRET){console.error('MONGO_URI and JWT_SECRET are required');process.exit(1)}
+mongoose.connect(process.env.MONGO_URI).then(()=>app.listen(port,()=>console.log(`AccessStore API listening on ${port}`))).catch(e=>{console.error('MongoDB connection failed:',e.message);process.exit(1)});
