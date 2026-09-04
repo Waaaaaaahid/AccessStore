@@ -4,98 +4,83 @@
 
 @layer base {
   :root {
-    --color-accent: #ef1c2f;
-    --color-accent-dark: #b80f20;
-    --color-dark: #050505;
+    --color-accent: #ef233c;
+    --color-accent-dark: #c9142b;
+    --color-bg: #08090a;
+    --color-surface: #0f1012;
+    --color-card: #141518;
+    --color-border: #24262a;
   }
-  html { scroll-behavior: smooth; background: #050505; }
-  body {
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    background: #050505;
-    color: #f5f5f5;
-  }
-  ::selection { background: #ef1c2f; color: #fff; }
+  html { scroll-behavior: smooth; background: var(--color-bg); }
+  body { font-family: 'Inter', system-ui, -apple-system, sans-serif; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; background: var(--color-bg); color: #f5f5f5; }
+  ::selection { background: #ef233c; color: #fff; }
 }
 
-/* ACCESSSTORE — BLACK + RED ONLY. No white canvas, no inverted look. */
+/* AccessStore premium dark palette: black foundation, white hierarchy, restrained red accent. */
 @layer utilities {
-  .access-red { color: #ef1c2f; }
-  .access-red-bg { background-color: #ef1c2f; color: #fff; }
-  .access-black { background-color: #050505; color: #fff; }
+  .access-red { color: #ef233c; }
+  .access-red-bg { background-color: #ef233c; color: #fff; }
+  .access-black { background-color: #08090a; color: #fff; }
 
-  /* Convert the generated light palette into a coherent dark palette. */
-  .bg-white { background-color: #080808 !important; }
-  .bg-gray-50 { background-color: #0b0b0b !important; }
-  .bg-gray-100 { background-color: #111111 !important; }
-  .bg-gray-200 { background-color: #181818 !important; }
-  .bg-gray-300 { background-color: #222222 !important; }
-  .bg-gray-400 { background-color: #333333 !important; }
-  .bg-gray-800 { background-color: #0a0a0a !important; }
-  .bg-gray-900 { background-color: #050505 !important; }
+  .bg-white { background-color: #08090a !important; }
+  .bg-gray-50 { background-color: #0f1012 !important; }
+  .bg-gray-100 { background-color: #141518 !important; }
+  .bg-gray-200 { background-color: #1b1d20 !important; }
+  .bg-gray-300 { background-color: #24262a !important; }
+  .bg-gray-400 { background-color: #34373d !important; }
+  .bg-gray-800 { background-color: #0b0c0e !important; }
+  .bg-gray-900 { background-color: #08090a !important; }
 
-  .text-gray-900 { color: #ffffff !important; }
-  .text-gray-800 { color: #f4f4f5 !important; }
-  .text-gray-700 { color: #e4e4e7 !important; }
-  .text-gray-600 { color: #c4c4c8 !important; }
-  .text-gray-500 { color: #a1a1aa !important; }
-  .text-gray-400 { color: #71717a !important; }
+  /* Explicitly fix the classes used by the redesigned pages. */
+  .text-gray-950 { color: #f7f7f8 !important; }
+  .text-gray-900 { color: #f7f7f8 !important; }
+  .text-gray-800 { color: #eeeeef !important; }
+  .text-gray-700 { color: #d4d5d8 !important; }
+  .text-gray-600 { color: #b9bbc0 !important; }
+  .text-gray-500 { color: #a1a3a9 !important; }
+  .text-gray-400 { color: #74777e !important; }
+  .text-gray-300 { color: #8f9299 !important; }
 
-  .border-gray-100 { border-color: #181818 !important; }
-  .border-gray-200 { border-color: #242424 !important; }
-  .border-gray-300 { border-color: #333333 !important; }
+  .border-gray-100 { border-color: #181a1d !important; }
+  .border-gray-200 { border-color: #24262a !important; }
+  .border-gray-300 { border-color: #303339 !important; }
 
-  /* Dark gradients instead of white gradients. */
-  .from-gray-50 { --tw-gradient-from: #0b0b0b var(--tw-gradient-from-position); --tw-gradient-to: rgb(11 11 11 / 0) var(--tw-gradient-to-position); }
-  .to-white { --tw-gradient-to: #080808 var(--tw-gradient-to-position); }
-  .from-white { --tw-gradient-from: #080808 var(--tw-gradient-from-position); --tw-gradient-to: rgb(8 8 8 / 0) var(--tw-gradient-to-position); }
-  .to-gray-50 { --tw-gradient-to: #0b0b0b var(--tw-gradient-to-position); }
-  .from-gray-900 { --tw-gradient-from: #050505 var(--tw-gradient-from-position); --tw-gradient-to: rgb(5 5 5 / 0) var(--tw-gradient-to-position); }
-  .to-gray-800 { --tw-gradient-to: #0a0a0a var(--tw-gradient-to-position); }
+  .from-gray-50 { --tw-gradient-from: #0f1012 var(--tw-gradient-from-position); --tw-gradient-to: rgb(15 16 18 / 0) var(--tw-gradient-to-position); }
+  .to-white { --tw-gradient-to: #08090a var(--tw-gradient-to-position); }
+  .from-white { --tw-gradient-from: #08090a var(--tw-gradient-from-position); --tw-gradient-to: rgb(8 9 10 / 0) var(--tw-gradient-to-position); }
+  .to-gray-50 { --tw-gradient-to: #0f1012 var(--tw-gradient-to-position); }
+  .from-gray-900 { --tw-gradient-from: #08090a var(--tw-gradient-from-position); --tw-gradient-to: rgb(8 9 10 / 0) var(--tw-gradient-to-position); }
+  .to-gray-800 { --tw-gradient-to: #0b0c0e var(--tw-gradient-to-position); }
 
-  /* Legacy blue palette -> AccessStore red palette, with dark backgrounds. */
-  .bg-blue-50 { background-color: #190608 !important; }
-  .bg-blue-100 { background-color: #26080c !important; }
-  .bg-blue-200 { background-color: #3a0b11 !important; }
-  .bg-blue-400 { background-color: #d9162a !important; }
-  .bg-blue-500 { background-color: #ef1c2f !important; }
-  .bg-blue-600 { background-color: #d91428 !important; }
-  .bg-blue-700 { background-color: #a90d1d !important; }
-  .text-blue-400 { color: #ff4a59 !important; }
-  .text-blue-500 { color: #ff2639 !important; }
-  .text-blue-600 { color: #ef1c2f !important; }
-  .text-blue-700 { color: #ff4a59 !important; }
-  .border-blue-100 { border-color: #4b1017 !important; }
-  .border-blue-500 { border-color: #ef1c2f !important; }
-  .border-blue-600 { border-color: #d91428 !important; }
-  .ring-blue-500\/20 { --tw-ring-color: rgb(239 28 47 / 0.2) !important; }
+  .bg-blue-50 { background-color: #1a080b !important; }
+  .bg-blue-100 { background-color: #260b10 !important; }
+  .bg-blue-200 { background-color: #3a1017 !important; }
+  .bg-blue-400 { background-color: #e21b32 !important; }
+  .bg-blue-500, .bg-blue-600 { background-color: #ef233c !important; }
+  .bg-blue-700 { background-color: #bf132b !important; }
+  .text-blue-400, .text-blue-500, .text-blue-600, .text-blue-700 { color: #ef233c !important; }
+  .border-blue-100, .border-blue-500, .border-blue-600 { border-color: #ef233c !important; }
+  .ring-blue-500\/20 { --tw-ring-color: rgb(239 35 60 / 0.2) !important; }
 
-  /* All semantic accent states stay within black/red. */
-  .bg-amber-50 { background-color: #180a0b !important; }
-  .bg-amber-100 { background-color: #260d0f !important; }
-  .text-amber-600, .text-amber-700, .text-amber-800 { color: #ff3347 !important; }
-  .bg-green-50, .bg-green-100 { background-color: #100707 !important; }
-  .text-green-500, .text-green-600, .text-green-700 { color: #ff3347 !important; }
-  .bg-red-50 { background-color: #190608 !important; }
-  .bg-red-100 { background-color: #26080c !important; }
-  .text-red-400 { color: #ff4a59 !important; }
-  .text-red-500, .text-red-600, .text-red-700 { color: #ef1c2f !important; }
-  .border-red-500, .border-red-600 { border-color: #ef1c2f !important; }
+  .bg-amber-50 { background-color: #1a0b0d !important; }
+  .bg-amber-100 { background-color: #280d11 !important; }
+  .text-amber-600, .text-amber-700, .text-amber-800 { color: #ff4a5f !important; }
+  .bg-green-50, .bg-green-100 { background-color: #12080a !important; }
+  .text-green-500, .text-green-600, .text-green-700 { color: #ff4a5f !important; }
+  .bg-red-50 { background-color: #1a080b !important; }
+  .bg-red-100 { background-color: #280b10 !important; }
+  .text-red-400 { color: #ff5265 !important; }
+  .text-red-500, .text-red-600, .text-red-700 { color: #ef233c !important; }
+  .border-red-500, .border-red-600 { border-color: #ef233c !important; }
 
-  .hover\:bg-gray-800:hover { background-color: #181818 !important; }
-  .hover\:bg-gray-100:hover { background-color: #1a1a1a !important; }
+  .hover\:bg-gray-800:hover { background-color: #1a1c20 !important; }
+  .hover\:bg-gray-100:hover { background-color: #1b1d20 !important; }
   .hover\:text-gray-900:hover { color: #ffffff !important; }
-  .hover\:border-gray-300:hover { border-color: #ef1c2f !important; }
+  .hover\:border-gray-300:hover { border-color: #ef233c !important; }
 
-  /* Common form controls remain dark with red focus. */
-  input, textarea, select {
-    background-color: #0b0b0b;
-    color: #f5f5f5;
-    border-color: #292929;
-  }
-  input::placeholder, textarea::placeholder { color: #71717a; }
-  input:focus, textarea:focus, select:focus { border-color: #ef1c2f; outline-color: #ef1c2f; }
+  input, textarea, select { background-color: #0f1012; color: #f5f5f5; border-color: #292b30; }
+  input::placeholder, textarea::placeholder { color: #6f7279; }
+  input:focus, textarea:focus, select:focus { border-color: #ef233c; outline-color: #ef233c; }
 }
 
 @layer utilities {
