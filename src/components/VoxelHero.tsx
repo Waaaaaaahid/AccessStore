@@ -1,48 +1,54 @@
 import { useEffect, useState } from 'react';
 
-export default function VoxelHero() {
+interface VoxelHeroProps {
+  productImage?: string;
+  productName?: string;
+}
+
+export default function VoxelHero({ productImage, productName = 'Featured Drop' }: VoxelHeroProps) {
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
 
   return (
-    <div className="relative w-full h-full flex items-center justify-center min-h-[400px]">
-      <div className="absolute top-10 right-10 w-64 h-64 bg-red-100 rounded-full blur-3xl opacity-60 animate-float" />
-      <div className="absolute bottom-10 left-10 w-48 h-48 bg-gray-100 rounded-full blur-3xl opacity-80 animate-float-delayed" />
+    <div className="relative w-full min-h-[420px] flex items-center justify-center">
+      <div className="absolute inset-8 rounded-[2rem] bg-gradient-to-br from-gray-50 via-white to-red-50/60 border border-gray-100" />
+      <div className="absolute top-10 right-10 w-56 h-56 rounded-full bg-red-100/50 blur-3xl" />
+      <div className="absolute bottom-8 left-8 w-40 h-40 rounded-full bg-gray-100/80 blur-3xl" />
 
-      <div className={`relative z-10 transition-all duration-1000 ${mounted ? 'opacity-100 scale-100' : 'opacity-0 scale-90'}`}>
-        <div className="relative" style={{ width: '320px', height: '320px' }}>
-          <div className="absolute left-1/2 -translate-x-1/2 top-0 w-24 h-24">
-            <div className="w-full h-full bg-gradient-to-br from-gray-800 to-gray-900 rounded-lg shadow-xl">
-              <div className="flex gap-3 justify-center pt-7">
-                <div className="w-5 h-5 bg-red-500 rounded-md shadow-inner" />
-                <div className="w-5 h-5 bg-red-500 rounded-md shadow-inner" />
+      <div className={`relative z-10 w-[min(88%,390px)] transition-all duration-700 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+        <div className="relative bg-white rounded-[1.75rem] border border-gray-200 shadow-[0_24px_70px_rgba(0,0,0,0.10)] overflow-hidden">
+          <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+            <span className="text-[10px] font-bold tracking-[0.18em] uppercase text-red-600">New Drop</span>
+            <span className="text-xs text-gray-400">AccessStore</span>
+          </div>
+          <div className="aspect-[4/4.2] bg-gradient-to-br from-gray-100 via-white to-gray-50 flex items-center justify-center p-8">
+            {productImage ? (
+              <img src={productImage} alt={productName} className="w-full h-full object-contain mix-blend-multiply drop-shadow-2xl" />
+            ) : (
+              <div className="relative w-44 h-52">
+                <div className="absolute inset-x-7 top-4 bottom-0 bg-gray-950 rounded-[2rem] shadow-2xl" />
+                <div className="absolute left-1/2 -translate-x-1/2 top-0 w-20 h-16 bg-gray-950 rounded-t-[2.2rem]" />
+                <div className="absolute left-1/2 -translate-x-1/2 top-14 w-9 h-9 rounded-full bg-red-600" />
+                <div className="absolute -left-1 top-14 w-12 h-28 bg-gray-950 rounded-3xl -rotate-12" />
+                <div className="absolute -right-1 top-14 w-12 h-28 bg-gray-950 rounded-3xl rotate-12" />
               </div>
-              <div className="flex justify-center mt-3"><div className="w-12 h-1.5 bg-gray-600 rounded-full" /></div>
-            </div>
+            )}
           </div>
-
-          <div className="absolute left-1/2 -translate-x-1/2 top-24 w-28 h-28">
-            <div className="w-full h-full bg-gradient-to-br from-red-500 to-red-700 rounded-lg shadow-xl flex items-center justify-center">
-              <div className="w-10 h-10 bg-red-300 rounded-lg opacity-60" />
+          <div className="p-5 flex items-end justify-between gap-4">
+            <div>
+              <p className="text-xs text-gray-400 mb-1">Featured collection</p>
+              <h3 className="font-semibold text-gray-900">{productName}</h3>
             </div>
+            <span className="inline-flex items-center gap-1.5 px-3 py-2 bg-red-600 text-white rounded-lg text-xs font-semibold">Shop now</span>
           </div>
-
-          <div className="absolute top-28 left-12 w-8 h-20"><div className="w-full h-full bg-gradient-to-b from-gray-700 to-gray-900 rounded-lg shadow-lg" /></div>
-          <div className="absolute top-28 right-12 w-8 h-20"><div className="w-full h-full bg-gradient-to-b from-gray-700 to-gray-900 rounded-lg shadow-lg" /></div>
-          <div className="absolute top-48 left-20 w-10 h-16"><div className="w-full h-full bg-gradient-to-b from-gray-800 to-gray-900 rounded-lg shadow-lg" /></div>
-          <div className="absolute top-48 right-20 w-10 h-16"><div className="w-full h-full bg-gradient-to-b from-gray-800 to-gray-900 rounded-lg shadow-lg" /></div>
-          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-40 h-3 bg-gray-200 rounded-full blur-sm" />
         </div>
       </div>
 
-      <div className="absolute top-8 left-4 sm:left-8 bg-white border border-red-100 shadow-lg rounded-xl px-3 py-2 animate-float">
-        <div className="flex items-center gap-2"><div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" /><span className="text-xs font-semibold text-gray-900">New Drop</span></div>
+      <div className="absolute top-8 left-0 sm:left-2 bg-white border border-gray-200 shadow-lg rounded-xl px-3.5 py-2.5">
+        <div className="flex items-center gap-2"><span className="w-2 h-2 bg-red-600 rounded-full" /><span className="text-xs font-semibold text-gray-800">Limited Drop</span></div>
       </div>
-      <div className="absolute top-1/3 right-4 sm:right-8 bg-white border border-gray-200 shadow-lg rounded-xl px-3 py-2 animate-float-delayed">
-        <div className="flex items-center gap-2"><div className="w-2 h-2 bg-red-500 rounded-full" /><span className="text-xs font-semibold text-gray-900">Community Favorite</span></div>
-      </div>
-      <div className="absolute bottom-12 left-1/2 -translate-x-1/2 bg-gray-900 text-white shadow-lg rounded-xl px-3 py-2 animate-float">
-        <div className="flex items-center gap-2"><div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" /><span className="text-xs font-semibold">Limited Stock</span></div>
+      <div className="absolute bottom-8 right-0 sm:right-2 bg-gray-950 text-white shadow-xl rounded-xl px-3.5 py-2.5">
+        <div className="flex items-center gap-2"><span className="w-2 h-2 bg-red-500 rounded-full" /><span className="text-xs font-semibold">Community Favorite</span></div>
       </div>
     </div>
   );
