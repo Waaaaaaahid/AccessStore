@@ -2,6 +2,8 @@ import { Link } from 'react-router-dom';
 import { Youtube, Instagram, MessageCircle } from 'lucide-react';
 import { useSettings } from '@/lib/config';
 
+const DISCORD_INVITE = 'https://discord.gg/5S56QMSz4';
+
 export default function Footer() {
   const settings = useSettings();
 
@@ -38,16 +40,21 @@ export default function Footer() {
               Official creator merchandise, gaming gear and exclusive picks for the community. Made for gamers, selected by the creator.
             </p>
             <div className="flex items-center gap-3 mt-5">
-              <a href={settings.youtube_url} target="_blank" rel="noopener noreferrer" className="w-9 h-9 bg-white border border-gray-200 rounded-lg flex items-center justify-center text-gray-600 hover:text-red-600 hover:border-red-200 transition-colors">
+              <a href={settings.youtube_url} target="_blank" rel="noopener noreferrer" aria-label="YouTube" className="w-9 h-9 bg-white border border-gray-200 rounded-lg flex items-center justify-center text-gray-600 hover:text-red-600 hover:border-red-200 transition-colors">
                 <Youtube className="w-4.5 h-4.5" />
               </a>
-              <a href={settings.instagram_url} target="_blank" rel="noopener noreferrer" className="w-9 h-9 bg-white border border-gray-200 rounded-lg flex items-center justify-center text-gray-600 hover:text-pink-600 hover:border-pink-200 transition-colors">
+              <a href={settings.instagram_url} target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="w-9 h-9 bg-white border border-gray-200 rounded-lg flex items-center justify-center text-gray-600 hover:text-pink-600 hover:border-pink-200 transition-colors">
                 <Instagram className="w-4.5 h-4.5" />
               </a>
-              <a href={settings.discord_url} target="_blank" rel="noopener noreferrer" className="w-9 h-9 bg-white border border-gray-200 rounded-lg flex items-center justify-center text-gray-600 hover:text-indigo-600 hover:border-indigo-200 transition-colors">
+              <a href={settings.discord_url || DISCORD_INVITE} target="_blank" rel="noopener noreferrer" aria-label="Join Discord" className="w-9 h-9 bg-white border border-gray-200 rounded-lg flex items-center justify-center text-gray-600 hover:text-indigo-600 hover:border-indigo-200 transition-colors">
                 <MessageCircle className="w-4.5 h-4.5" />
               </a>
             </div>
+
+            <a href={settings.discord_url || DISCORD_INVITE} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 mt-5 px-4 py-2.5 rounded-lg bg-[#5865F2] text-white text-sm font-semibold hover:opacity-90 transition-opacity">
+              <MessageCircle className="w-4 h-4" />
+              Join our Discord Community
+            </a>
           </div>
 
           {/* Links */}
