@@ -2,19 +2,19 @@ import { useEffect, useState } from 'react';
 import { supabase } from './supabase';
 
 const defaultSettings: Record<string, string> = {
-  creator_name: 'BlockMaster',
+  creator_name: 'AccessStore',
   creator_tagline: 'Level Up Your Roblox Experience',
-  creator_description: "Hey! I'm BlockMaster, a Roblox content creator creating entertaining gaming videos, challenges and community content.",
+  creator_description: "Welcome to AccessStore — your creator store for gaming gear, merchandise and community picks.",
   youtube_subscribers: '2.5M',
   youtube_videos: '850+',
   youtube_views: '450M+',
-  youtube_url: 'https://youtube.com/@blockmaster',
-  instagram_url: 'https://instagram.com/blockmaster',
-  discord_url: 'https://discord.gg/blockmaster',
-  business_email: 'contact@blockmaster.store',
-  whatsapp_number: '+91 98765 43210',
-  upi_id: 'blockmaster@upi',
-  support_page_url: 'https://buymeacoffee.com/blockmaster',
+  youtube_url: '',
+  instagram_url: '',
+  discord_url: '',
+  business_email: '',
+  whatsapp_number: '',
+  upi_id: '',
+  support_page_url: '',
   hero_heading: 'Level Up Your Roblox Experience.',
   hero_subheading: 'Official creator merchandise, gaming gear and exclusive picks for the community.',
 };
