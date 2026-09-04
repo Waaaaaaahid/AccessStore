@@ -1,0 +1,43 @@
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { CartProvider } from '@/context/CartContext';
+import Layout from '@/components/Layout';
+import Home from '@/pages/Home';
+import Store from '@/pages/Store';
+import ProductDetails from '@/pages/ProductDetails';
+import Cart from '@/pages/Cart';
+import Checkout from '@/pages/Checkout';
+import OrderConfirmation from '@/pages/OrderConfirmation';
+import TrackOrder from '@/pages/TrackOrder';
+import Admin from '@/pages/Admin';
+import Support from '@/pages/Support';
+import About from '@/pages/About';
+import Contact from '@/pages/Contact';
+import LegalPage from '@/pages/LegalPage';
+
+export default function App() {
+  return (
+    <CartProvider>
+      <BrowserRouter>
+        <Layout>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/store" element={<Store />} />
+            <Route path="/product/:slug" element={<ProductDetails />} />
+            <Route path="/cart" element={<Cart />} />
+            <Route path="/checkout" element={<Checkout />} />
+            <Route path="/order-confirmation/:orderId" element={<OrderConfirmation />} />
+            <Route path="/track" element={<TrackOrder />} />
+            <Route path="/admin" element={<Admin />} />
+            <Route path="/support" element={<Support />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/privacy-policy" element={<LegalPage type="privacy" />} />
+            <Route path="/terms" element={<LegalPage type="terms" />} />
+            <Route path="/refund-policy" element={<LegalPage type="refund" />} />
+            <Route path="/shipping-policy" element={<LegalPage type="shipping" />} />
+          </Routes>
+        </Layout>
+      </BrowserRouter>
+    </CartProvider>
+  );
+}
