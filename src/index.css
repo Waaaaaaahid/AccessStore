@@ -9,6 +9,8 @@ body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSy
 a,button,input,textarea,select{-webkit-tap-highlight-color:transparent}button{cursor:pointer}
 input,textarea,select{color:#f8fafc;background:#0b0f18;border-color:var(--line)}input::placeholder,textarea::placeholder{color:#64748b}
 :focus-visible{outline:2px solid #a78bfa;outline-offset:2px}
+/* Keep text readable on every light surface even though the app shell is dark. */
+.bg-white{color:#0f172a}.bg-white.text-white{color:#fff}.bg-gray-50{color:#334155}.bg-gray-50.text-white{color:#fff}.bg-slate-50{color:#0f172a}.bg-slate-50.text-white{color:#fff}
 .page-transition{animation:pageIn .35s ease both}.glass{background:rgba(13,17,27,.72);backdrop-filter:blur(18px);border:1px solid var(--line)}
 .noise{background-image:radial-gradient(rgba(255,255,255,.07) 1px,transparent 1px);background-size:18px 18px}
 .gradient-text{background:linear-gradient(90deg,#c4b5fd,#67e8f9);-webkit-background-clip:text;background-clip:text;color:transparent}
