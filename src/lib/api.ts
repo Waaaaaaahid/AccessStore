@@ -1,5 +1,6 @@
-const API = (import.meta.env.VITE_API_URL || 'https://accessstore-api.onrender.com').replace(/\/$/, '');
+const API = 'https://accessstore-api.onrender.com';
 export { API };
+
 export async function api<T=any>(path:string, options:RequestInit={}) : Promise<T> {
   const token = localStorage.getItem('accessstore_token');
   const headers = new Headers(options.headers || {});
