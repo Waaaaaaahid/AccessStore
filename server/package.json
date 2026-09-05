@@ -2,7 +2,7 @@
   "name": "accessstore-api",
   "private": true,
   "type": "module",
-  "scripts": { "dev": "node --watch src/index.js", "start": "node src/seedProducts.js && node src/index.js" },
+  "scripts": { "dev": "node --watch src/index.js", "start": "node src/seedProducts.js && node src/bootstrap.js" },
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
