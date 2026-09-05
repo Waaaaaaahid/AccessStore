@@ -14,6 +14,7 @@ express.application.listen = function (...args) {
 };
 
 await import('./index.js');
+while (!app) await new Promise(resolve => setTimeout(resolve, 10));
 
 const getUser = async (req) => {
   const raw = req.headers.authorization || '';
