@@ -1,6 +1,8 @@
 import 'dotenv/config';
 import mongoose from 'mongoose';
+import bcrypt from 'bcryptjs';
 import Product from './models/Product.js';
+import User from './models/User.js';
 
 const products = [
   {name:'Cosmic Byte Raptor Wireless Gaming Mouse',slug:'cosmic-byte-raptor-wireless-gaming-mouse',description:'Lightweight wireless gaming mouse for FPS and everyday gaming.',short_description:'Wireless gaming mouse with RGB and precise tracking.',price:899,original_price:1999,image_url:'https://images.unsplash.com/photo-1527814050087-3793815479db?w=900&q=85',category:'Gaming Mice',stock:25,is_featured:true,is_new:true,rating:4.4,review_count:860},
@@ -24,8 +26,20 @@ const products = [
 ];
 
 await mongoose.connect(process.env.MONGO_URI);
-for (const product of products) {
-  await Product.updateOne({slug:product.slug},{$set:{...product,is_active:true}},{upsert:true});
-}
+for (const product of products) await Product.updateOne({slug:product.slug},{$set:{...product,is_active:true}},{upsert:true});
 console.log(`Ensured ${products.length} gaming products are active in MongoDB`);
+
+const adminEmail=String(process.env.ADMIN_EMAIL||'').trim().toLowerCase();
+const adminPassword=String(process.env.ADMIN_PASSWORD||'');
+if(adminEmail&&adminPassword){
+  const passwordHash=await bcrypt.hash(adminPassword,12);
+  const existing=await User.findOne({email:adminEmail}).select('+passwordHash');
+  if(!existing){
+    await User.create({name:'Administrator',email:adminEmail,passwordHash,role:'admin'});
+    console.log(`Ensured admin account exists: ${adminEmail}`);
+  }else{
+    existing.name=existing.name||'Administrator';existing.role='admin';existing.passwordHash=passwordHash;await existing.save();
+    console.log(`Synced admin account: ${adminEmail}`);
+  }
+}else console.log('ADMIN_EMAIL / ADMIN_PASSWORD not configured; admin seed skipped');
 await mongoose.disconnect();
