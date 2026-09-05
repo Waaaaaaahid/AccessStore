@@ -5,7 +5,7 @@ import Product from './models/Product.js';
 const products = [
   {name:'Cosmic Byte Raptor Wireless Gaming Mouse',slug:'cosmic-byte-raptor-wireless-gaming-mouse',description:'Lightweight wireless gaming mouse for FPS and everyday gaming.',short_description:'Wireless gaming mouse with RGB and precise tracking.',price:899,original_price:1999,image_url:'https://images.unsplash.com/photo-1527814050087-3793815479db?w=900&q=85',category:'Gaming Mice',stock:25,is_featured:true,is_new:true,rating:4.4,review_count:860},
   {name:'Cosmic Byte Firestorm Gaming Mouse',slug:'cosmic-byte-firestorm-gaming-mouse',description:'Wired ambidextrous optical gaming mouse built for responsive gameplay.',short_description:'Responsive wired gaming mouse for PC gamers.',price:999,original_price:1499,image_url:'https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?w=900&q=85',category:'Gaming Mice',stock:25,is_featured:true,rating:4.4,review_count:1200},
-  {name:'EVOFOX Katana X2 Mechanical Gaming Keyboard',slug:'evofox-katana-x2-mechanical-gaming-keyboard',description:'Mechanical gaming keyboard with dynamic backlighting and anti-ghosting.',short_description:'RGB mechanical keyboard for competitive gaming.',price:1999,original_price:3499,image_url:'https://images.unsplash.com/photo-1595225476474-87563907a212?w=900&q=85',category:'Gaming Keyboards',stock:20,is_featured:true,rating:4.6,review_count:904},
+  {name:'EVOFOX Katana X2 Mechanical Gaming Keyboard',slug:'evofox-katana-x2-mechanical-gaming-keyboard',description:'Mechanical gaming keyboard with dynamic backlighting and anti-ghosting.',short_description:'RGB mechanical keyboard for competitive gaming.',price:1999,original_price:3499,image_url:'https://images.unsplash.com/photo-1595225476474-87563907a212?w=900&q=85',category:'Gaming Keyboards',stock:20,is_featured:true,is_new:true,rating:4.6,review_count:904},
   {name:'Kreo Hive RGB 75% Mechanical Gaming Keyboard',slug:'kreo-hive-rgb-75-mechanical-keyboard',description:'Compact 75% mechanical gaming keyboard with RGB lighting.',short_description:'Compact hot-swap style gaming keyboard.',price:3199,original_price:4600,image_url:'https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=900&q=85',category:'Gaming Keyboards',stock:18,is_featured:true,rating:4.6,review_count:476},
   {name:'SpinBot Rage MK61 60% Gaming Keyboard',slug:'spinbot-rage-mk61-gaming-keyboard',description:'Compact 60% RGB keyboard with anti-ghosting keys.',short_description:'Budget compact RGB keyboard for gamers.',price:1299,original_price:2999,image_url:'https://images.unsplash.com/photo-1541140532154-b024d705b90a?w=900&q=85',category:'Gaming Keyboards',stock:25,rating:4.4,review_count:140},
   {name:'Cosmic Byte GS430 RGB Gaming Headset',slug:'cosmic-byte-gs430-rgb-gaming-headset',description:'Over-ear gaming headset with RGB lighting and microphone.',short_description:'RGB over-ear headset with gaming microphone.',price:1305,original_price:1499,image_url:'https://images.unsplash.com/photo-1599669454699-248893623440?w=900&q=85',category:'Gaming Headsets',stock:25,is_featured:true,rating:4.3,review_count:13000},
@@ -24,11 +24,8 @@ const products = [
 ];
 
 await mongoose.connect(process.env.MONGO_URI);
-const count = await Product.countDocuments();
-if (count === 0) {
-  await Product.insertMany(products);
-  console.log(`Seeded ${products.length} gaming products into MongoDB`);
-} else {
-  console.log(`Products already exist (${count}); seed skipped`);
+for (const product of products) {
+  await Product.updateOne({slug:product.slug},{$set:{...product,is_active:true}},{upsert:true});
 }
+console.log(`Ensured ${products.length} gaming products are active in MongoDB`);
 await mongoose.disconnect();
