@@ -4,83 +4,34 @@ import bcrypt from 'bcryptjs';
 import Product from './models/Product.js';
 import User from './models/User.js';
 
-// Curated from live Flipkart listings checked on 5 Sep 2026. Keep only real products
-// with a retailer page so an admin can open the exact source listing when fulfilling an order.
+// Gaming catalog built from retailer listings. AccessStore price = retailer price + ₹349.
 const products = [
-  {
-    name:'Cosmic Byte Raptor Right Handed Optical Gaming Mouse',
-    slug:'cosmic-byte-raptor-right-handed-gaming-mouse',
-    description:'Cosmic Byte Raptor right-handed 2.4GHz wireless gaming mouse with a responsive optical sensor, ergonomic shape and gaming-focused controls.',
-    short_description:'Wireless gaming mouse with 2.4GHz connectivity and ergonomic design.',
-    price:899, original_price:1999,
-    image_url:'https://cdns3.thecosmicbyte.com/wp-content/uploads/00.jpg.webp',
-    category:'Gaming Mice', source_store:'Flipkart',
-    source_url:'https://www.flipkart.com/cosmic-byte-raptor-wireless-right-handed-optical-gaming-mouse/p/itm1683cbe52bca5',
-    stock:10,is_featured:true,is_new:true,rating:4.5,review_count:62,tags:['gaming mouse','wireless','cosmic byte']
-  },
-  {
-    name:'Logitech G304 LIGHTSPEED Wireless Gaming Mouse',
-    slug:'logitech-g304-lightspeed-wireless-gaming-mouse',
-    description:'Logitech G304 LIGHTSPEED wireless gaming mouse with HERO sensor, 200–12000 DPI, 1000Hz report rate, six programmable buttons and up to 250 hours of battery life.',
-    short_description:'HERO sensor wireless gaming mouse with LIGHTSPEED connectivity.',
-    price:2795, original_price:3795,
-    image_url:'https://cdn2.cybermall.ru/images/products/003/336/541/big/32501962_1.jpg',
-    category:'Gaming Mice', source_store:'Flipkart',
-    source_url:'https://www.flipkart.com/logitech-g304-wireless-ambidextrous-optical-gaming-mouse-bluetooth/p/itm2a2172425fd8e',
-    stock:10,is_featured:true,rating:4.5,review_count:1713,tags:['gaming mouse','wireless','logitech','g304']
-  },
-  {
-    name:'Cosmic Byte Spectrum RGB 12800DPI Gaming Mouse',
-    slug:'cosmic-byte-spectrum-rgb-12800dpi-gaming-mouse',
-    description:'Cosmic Byte Spectrum RGB wired ambidextrous gaming mouse with 66g lightweight honeycomb design, 12800 DPI, 1000Hz polling and 10-million-click switches.',
-    short_description:'66g RGB wired gaming mouse with 12800 DPI and 1000Hz polling.',
-    price:699, original_price:1499,
-    image_url:'https://vishalperipherals.com/cdn/shop/files/TCBP03429.png?v=1729801631',
-    category:'Gaming Mice', source_store:'Flipkart',
-    source_url:'https://www.flipkart.com/cosmic-byte-spectrum-rgb-66grams-12800dpi-1000hz-polling-10m-switches-software-support-wired-optical-gaming-mouse/p/itmced3f91e0ee8e',
-    stock:10,is_featured:true,is_new:true,rating:4.6,review_count:14,tags:['gaming mouse','rgb','wired','cosmic byte']
-  },
-  {
-    name:'EVOFOX Ronin TKL RGB Mechanical Gaming Keyboard',
-    slug:'evofox-ronin-tkl-rgb-mechanical-gaming-keyboard',
-    description:'EVOFOX Ronin TKL RGB mechanical wired gaming keyboard with a compact tenkeyless layout, mechanical switches, RGB effects and USB connectivity.',
-    short_description:'TKL mechanical RGB gaming keyboard with compact layout.',
-    price:2899, original_price:3999,
-    image_url:'https://i.ytimg.com/vi/AkPAVyzccus/maxresdefault.jpg',
-    category:'Gaming Keyboards', source_store:'Flipkart',
-    source_url:'https://www.flipkart.com/evofox-ronin-tkl-rgb-mechanical-wired-usb-tenkeyless-gaming-keyboard-compatible-desktop-laptop-mac/p/itm11cf479fea3a5',
-    stock:10,is_featured:true,rating:4.5,review_count:952,tags:['gaming keyboard','mechanical','rgb','evofox']
-  },
-  {
-    name:'Cosmic Byte GS430 Wired Gaming Headset',
-    slug:'cosmic-byte-gs430-wired-gaming-headset',
-    description:'Cosmic Byte GS430 wired over-ear gaming headset with 40mm drivers, deep bass, microphone and a 2.2m cable.',
-    short_description:'Wired gaming headset with microphone and deep bass.',
-    price:1305, original_price:1499,
-    image_url:'https://techwalker.co.in/uploads/product-imgs/pic/6017567601724841434.png',
-    category:'Gaming Headsets', source_store:'Flipkart',
-    source_url:'https://www.flipkart.com/cosmicbyte-gs430-wired-headset/p/itm097793e7dfbb2',
-    stock:10,is_featured:true,rating:4.2,review_count:13632,tags:['gaming headset','headset','microphone','cosmic byte']
-  },
-  {
-    name:'Cosmic Byte Ares Pro Wireless Gamepad Tri-Mode',
-    slug:'cosmic-byte-ares-pro-wireless-gamepad-tri-mode',
-    description:'Cosmic Byte Ares Pro wireless gaming controller with wired and wireless connectivity, backlit controls and compatibility with PC, Android and iOS.',
-    short_description:'Tri-mode wireless gaming controller for PC and mobile.',
-    price:2299, original_price:4499,
-    image_url:'https://cdn.grofers.com/da/cms-assets/cms/product/rc-upload-1770619374221-1535.jpg',
-    category:'Gaming Controllers', source_store:'Flipkart',
-    source_url:'https://www.flipkart.com/cosmic-byte-ares-pro-wireless-gamepad-tri-mode-wi-fi/p/itm42b0014368721',
-    stock:10,is_featured:true,rating:4.2,review_count:102,tags:['gaming controller','gamepad','wireless','cosmic byte']
-  }
+  {name:'Cosmic Byte Raptor Right Handed Optical Gaming Mouse',slug:'cosmic-byte-raptor-right-handed-gaming-mouse',description:'2.4GHz wireless right-handed gaming mouse with responsive optical tracking and ergonomic design.',short_description:'Wireless gaming mouse with 2.4GHz connectivity.',price:1248,original_price:1999,image_url:'https://cdns3.thecosmicbyte.com/wp-content/uploads/00.jpg.webp',category:'Gaming Mice',source_store:'Flipkart',source_url:'https://www.flipkart.com/cosmic-byte-raptor-wireless-right-handed-optical-gaming-mouse/p/itm1683cbe52bca5',stock:10,is_featured:true,is_new:true,rating:4.5,review_count:62,tags:['gaming','gaming mouse','wireless','roblox']},
+  {name:'Logitech G304 LIGHTSPEED Wireless Gaming Mouse',slug:'logitech-g304-lightspeed-wireless-gaming-mouse',description:'HERO sensor wireless gaming mouse with LIGHTSPEED, programmable buttons and up to 12000 DPI.',short_description:'HERO sensor wireless gaming mouse.',price:2853,original_price:4795,image_url:'https://cdn2.cybermall.ru/images/products/003/336/541/big/32501962_1.jpg',category:'Gaming Mice',source_store:'Flipkart',source_url:'https://www.flipkart.com/logitech-g304-wireless-ambidextrous-optical-gaming-mouse-bluetooth/p/itm2a2172425fd8e',stock:10,is_featured:true,rating:4.5,review_count:1715,tags:['gaming','gaming mouse','wireless','logitech','roblox']},
+  {name:'Cosmic Byte Spectrum RGB 12800DPI Gaming Mouse',slug:'cosmic-byte-spectrum-rgb-12800dpi-gaming-mouse',description:'66g lightweight RGB wired gaming mouse with 12800 DPI and 1000Hz polling.',short_description:'Lightweight RGB gaming mouse.',price:1048,original_price:1499,image_url:'https://vishalperipherals.com/cdn/shop/files/TCBP03429.png?v=1729801631',category:'Gaming Mice',source_store:'Flipkart',source_url:'https://www.flipkart.com/cosmic-byte-spectrum-rgb-66grams-12800dpi-1000hz-polling-10m-switches-software-support-wired-optical-gaming-mouse/p/itmced3f91e0ee8e',stock:10,is_featured:true,is_new:true,rating:4.6,review_count:14,tags:['gaming','rgb','wired','gaming mouse','roblox']},
+  {name:'Cosmic Byte Firestorm RGB Gaming Mouse',slug:'cosmic-byte-firestorm-gaming-mouse',description:'Wired ambidextrous RGB gaming mouse with 12400 DPI and Pixart sensor.',short_description:'Responsive wired RGB gaming mouse.',price:1348,original_price:1799,image_url:'https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?w=900&q=85',category:'Gaming Mice',source_store:'Flipkart',source_url:'https://www.flipkart.com/cosmic-byte-firestorm-wired-ambidextrous-optical-gaming-mouse/p/itm4598bc4b35b68',stock:10,rating:4.5,review_count:37,tags:['gaming','gaming mouse','rgb']},
+  {name:'EVOFOX Ronin TKL RGB Mechanical Gaming Keyboard',slug:'evofox-ronin-tkl-rgb-mechanical-gaming-keyboard',description:'Compact TKL mechanical RGB gaming keyboard with USB connectivity.',short_description:'TKL mechanical RGB gaming keyboard.',price:3248,original_price:3999,image_url:'https://i.ytimg.com/vi/AkPAVyzccus/maxresdefault.jpg',category:'Gaming Keyboards',source_store:'Flipkart',source_url:'https://www.flipkart.com/evofox-ronin-tkl-rgb-mechanical-wired-usb-desktop-keyboard/p/itm11cf479fea3a5',stock:10,is_featured:true,rating:4.5,review_count:961,tags:['gaming','keyboard','mechanical','rgb','roblox']},
+  {name:'EVOFOX Katana X2 Mechanical Gaming Keyboard',slug:'evofox-katana-x2-mechanical-gaming-keyboard',description:'Mechanical gaming keyboard with dynamic backlighting and anti-ghosting.',short_description:'Mechanical RGB-style gaming keyboard.',price:2348,original_price:3499,image_url:'https://images.unsplash.com/photo-1595225476474-87563907a212?w=900&q=85',category:'Gaming Keyboards',source_store:'Flipkart',source_url:'https://www.flipkart.com/evofox-katana-x2-mechanical-dynamic-backlighting-wired-usb-standard-gaming-keyboard-compatible-desktop-laptop/p/itmfcff371e8976c',stock:10,is_featured:true,is_new:true,rating:4.6,review_count:904,tags:['gaming','keyboard','mechanical','roblox']},
+  {name:'Kreo Hive RGB 75% Mechanical Gaming Keyboard',slug:'kreo-hive-rgb-75-mechanical-keyboard',description:'75% hot-swappable mechanical RGB gaming keyboard with anti-ghosting.',short_description:'Compact hot-swappable RGB keyboard.',price:3548,original_price:4600,image_url:'https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=900&q=85',category:'Gaming Keyboards',source_store:'Flipkart',source_url:'https://www.flipkart.com/kreo-hive-rgb-75-wired-mechanical-gaming-keyboard/p/itmcb9e85920e518',stock:10,is_featured:true,rating:4.6,review_count:472,tags:['gaming','keyboard','mechanical','rgb','roblox']},
+  {name:'SpinBot Rage MK61 60% Gaming Keyboard',slug:'spinbot-rage-mk61-gaming-keyboard',description:'60% mechanical gaming keyboard with blue tactile switches and anti-ghosting.',short_description:'Compact 60% mechanical gaming keyboard.',price:1648,original_price:2999,image_url:'https://images.unsplash.com/photo-1541140532154-b024d705b90a?w=900&q=85',category:'Gaming Keyboards',source_store:'Flipkart',source_url:'https://www.flipkart.com/spinbot-rage-mk61-60-led-backlit-22-anti-ghosting-key-blue-tactile-switches-mechanical-wired-usb-tenkeyless-gaming-keyboard-compatible-desktop-laptop-mac-tablet/p/itmb039ed6f673d6',stock:10,rating:4.4,review_count:141,tags:['gaming','keyboard','mechanical','roblox']},
+  {name:'Cosmic Byte GS430 Wired Gaming Headset',slug:'cosmic-byte-gs430-wired-gaming-headset',description:'Wired gaming headset with deep bass, microphone and gaming-focused audio.',short_description:'Gaming headset with microphone.',price:1654,original_price:1499,image_url:'https://techwalker.co.in/uploads/product-imgs/pic/6017567601724841434.png',category:'Gaming Headsets',source_store:'Flipkart',source_url:'https://www.flipkart.com/cosmicbyte-gs430-wired-headset/p/itm097793e7dfbb2',stock:10,is_featured:true,rating:4.2,review_count:13631,tags:['gaming','headset','microphone','roblox']},
+  {name:'EVOFOX One S Universal 3-Mode Wireless Gamepad',slug:'evofox-one-s-wireless-controller',description:'3-mode wireless and wired Bluetooth gamepad for PC, mobile and console-style gaming.',short_description:'Universal 3-mode gaming controller.',price:1948,original_price:2299,image_url:'https://images.unsplash.com/photo-1600080972464-8e5f35f63d08?w=900&q=85',category:'Gaming Controllers',source_store:'Flipkart',source_url:'https://www.flipkart.com/evofox-one-s-universal-3-mode-wireless-wired-gamepad/p/itm062cf4a1b5665',stock:10,is_featured:true,rating:4.5,review_count:1924,tags:['gaming','controller','gamepad','roblox']},
+  {name:'Cosmic Byte Ares Wireless Gamepad Tri-Mode',slug:'cosmic-byte-ares-tri-mode-gamepad',description:'Tri-mode wireless, Bluetooth and wired gaming controller for PC and Android.',short_description:'Tri-mode wireless gaming controller.',price:2148,original_price:3499,image_url:'https://images.unsplash.com/photo-1592840496694-26d035b52b48?w=900&q=85',category:'Gaming Controllers',source_store:'Flipkart',source_url:'https://www.flipkart.com/cosmic-byte-ares-wireless-gamepad-tri-mode/p/itm742a0cd7258a5',stock:10,rating:4.5,review_count:96,tags:['gaming','controller','gamepad','roblox']},
+  {name:'Cosmic Byte Ares Pro Wireless Gamepad Tri-Mode',slug:'cosmic-byte-ares-pro-wireless-gamepad-tri-mode',description:'Tri-mode wireless gaming controller with wired and wireless connectivity.',short_description:'Tri-mode gaming controller.',price:2648,original_price:4499,image_url:'https://cdn.grofers.com/da/cms-assets/cms/product/rc-upload-1770619374221-1535.jpg',category:'Gaming Controllers',source_store:'Flipkart',source_url:'https://www.flipkart.com/cosmic-byte-ares-pro-wireless-gamepad-tri-mode-wi-fi/p/itm42b0014368721',stock:10,is_featured:true,rating:4.2,review_count:102,tags:['gaming','controller','gamepad','roblox']},
+  {name:'GTPLAYER 1USA Ergonomic Gaming Chair',slug:'gtplayer-ergonomic-gaming-chair',description:'Multi-functional ergonomic gaming chair for long gaming sessions.',short_description:'Ergonomic gaming chair.',price:11348,original_price:26999,image_url:'https://images.unsplash.com/photo-1598550476439-6847785fcea6?w=900&q=85',category:'Gaming Chairs',source_store:'Flipkart',source_url:'https://www.flipkart.com/gtplayer-1usa-multi-functional-ergonomic-gaming-chair/p/itm19424a418d868',stock:5,is_featured:true,rating:4.3,review_count:1086,tags:['gaming','chair','gaming setup']},
+  {name:'ZEBRONICS Zeb-MSP X1 Gaming Mouse Pad',slug:'zebronics-zeb-msp-x1-gaming-mouse-pad',description:'Non-slip gaming mouse pad for smooth mouse movement.',short_description:'Budget gaming mouse pad.',price:448,original_price:299,image_url:'https://images.unsplash.com/photo-1611078489935-0cb964de46d6?w=900&q=85',category:'Gaming Mousepads',source_store:'Flipkart',source_url:'https://www.flipkart.com/zebronics-zeb-msp-x1-non-slip-base-mousepad/p/itm61a3f69a687af',stock:20,is_new:true,rating:4.6,review_count:76,tags:['gaming','mousepad','roblox']},
+  {name:'Frontech Quantum Striker Gaming Combo',slug:'frontech-quantum-striker-rgb-combo',description:'Rainbow-backlit gaming keyboard and mouse combo with gaming-focused controls.',short_description:'Affordable RGB gaming combo.',price:1116,original_price:2200,image_url:'https://images.unsplash.com/photo-1618384887929-16ec33fab9ef?w=900&q=85',category:'Gaming Combos',source_store:'Flipkart',source_url:'https://www.flipkart.com/frontech-quantum-striker-gaming-combo-rainbow-backlit-2400-dpi-104-keys/p/itm00000000000000',stock:10,rating:4.1,review_count:530,tags:['gaming','combo','keyboard','mouse','roblox']},
+  {name:'Acer ALG 4 in 1 Gaming Combo',slug:'acer-alg-4-in-1-gaming-combo',description:'Gaming kit with backlit keyboard, RGB mouse, gaming headset and mousepad.',short_description:'4-in-1 gaming accessory kit.',price:2748,original_price:3999,image_url:'https://images.unsplash.com/photo-1598550478831-5a9c1f6e8a0f?w=900&q=85',category:'Gaming Combos',source_store:'Flipkart',source_url:'https://www.flipkart.com/acer-alg-4-1-gaming-combo-backlit-keyboard-rgb-mouse-headset-mousepad-accessory-kit/p/itm385798a0b13ca',stock:10,is_featured:true,rating:3.2,review_count:0,tags:['gaming','combo','keyboard','mouse','headset']},
+  {name:'ENTWINO 5-in-1 Gaming Kit',slug:'entwino-5-in-1-gaming-kit',description:'Gaming bundle containing RGB keyboard, gaming mouse, headset, gamepad and mousepad.',short_description:'5-in-1 complete gaming setup kit.',price:2367,original_price:3699,image_url:'https://images.unsplash.com/photo-1598550478831-5a9c1f6e8a0f?w=900&q=85',category:'Gaming Combos',source_store:'Flipkart',source_url:'https://www.flipkart.com/entwino-5-1-gaming-keyboard-mouse-headphone-game-pad-mousepad-combo-set-designed/p/itm0a1228649930c',stock:10,is_featured:true,rating:4.2,review_count:6,tags:['gaming','combo','keyboard','mouse','headset','controller','roblox']}
 ];
 
 await mongoose.connect(process.env.MONGO_URI);
-// Remove the old placeholder catalog completely. AccessStore should contain only
-// products that have a verified retailer listing and an exact fulfillment URL.
-await Product.deleteMany({});
-for (const product of products) await Product.create({...product,is_active:true});
-console.log(`Ensured ${products.length} verified retailer-linked gaming products are active in MongoDB`);
+// IMPORTANT: never delete the existing catalog. Upsert these retailer-linked products and
+// leave all previously added products/orders intact.
+for (const product of products) {
+  await Product.updateOne({slug:product.slug},{$set:{...product,is_active:true}},{upsert:true});
+}
+console.log(`Ensured ${products.length} retailer-linked gaming products are active in MongoDB`);
 
 const adminEmail=String(process.env.ADMIN_EMAIL||'').trim().toLowerCase();
 const adminPassword=String(process.env.ADMIN_PASSWORD||'');
